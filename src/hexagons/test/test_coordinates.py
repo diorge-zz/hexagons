@@ -198,3 +198,16 @@ def test_ring_nonorigin():
                     coord.Cube(1, -2, 1), coord.Cube(2, -2, 0)])
     result = set(center.ring(2))
     assert expected == result
+
+
+def test_basic_ray_vision():
+    center = coord.Cube.origin
+    obstacles = set([coord.Cube(0, -1, 1), coord.Cube(2, 0, -2)])
+    expected = set(center.circle_around(3))
+    expected.remove(coord.Cube(0, -2, 2))
+    expected.remove(coord.Cube(-1, -2, 3))
+    expected.remove(coord.Cube(0, -3, 3))
+    expected.remove(coord.Cube(1, -3, 2))
+    expected.remove(coord.Cube(3, 0, -3))
+    result = set(center.basic_ray_vision(3, lambda x: x in obstacles))
+    assert expected == result

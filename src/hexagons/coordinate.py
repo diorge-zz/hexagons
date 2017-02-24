@@ -151,6 +151,22 @@ class Cube:
                 current.add(self + Cube(*perm))
         return current
 
+    def basic_ray_vision(self, size, obstacle):
+        """
+        Returns all the hexes within ''size'' that are visible,
+        using basic ray casting, considering all the ''obstacle''
+        (which should be a function returning True for obstacles)
+        """
+        result = set()
+        outer = self.ring(size)
+        for pt in outer:
+            line = self.line_to(pt)
+            for possible in line:
+                result.add(possible)
+                if obstacle(possible):
+                    break
+        return result
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)
