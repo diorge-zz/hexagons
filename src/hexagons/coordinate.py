@@ -75,6 +75,13 @@ class Cube:
         for i in range(n + 1):
             yield (cube_lerp(self, target, i / n) + Cube._epsilon).round()
 
+    def circle_around(self, size):
+        """ The collection of hexagons in a circle of radius ''size'' """
+        for x in range(-size, size + 1):
+            for y in range(max(-size, -x - size), min(size, -x + size) + 1):
+                z = -(x + y)
+                yield self + Cube(x, y, z)
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)

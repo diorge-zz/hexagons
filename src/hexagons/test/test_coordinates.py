@@ -5,6 +5,7 @@ Test module for coordinate methods and conversions
 
 import hexagons.coordinate as coord
 import pytest
+import itertools
 
 
 def test_cube_getters():
@@ -117,3 +118,12 @@ def test_line_order():
     hexes_in_line = [origin, coord.Cube(-1, 0, 1), coord.Cube(-2, 1, 1), target]
     line = list(origin.line_to(target))
     assert hexes_in_line == line
+
+
+def test_circle_around():
+    center = coord.Cube(0, 0, 0)
+    immediate = list(center.neighbors())
+    dist2 = [list(imm.neighbors()) for imm in immediate]
+    flat_dist2 = itertools.chain(*dist2)
+    everything = set([center]) | set(immediate) | set(flat_dist2)
+    assert everything == set(center.circle_around(2))
