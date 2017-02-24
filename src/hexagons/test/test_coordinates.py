@@ -115,7 +115,8 @@ def test_line_order():
     """ The line must be draw in the order from origin to target """
     origin = coord.Cube(0, 0, 0)
     target = coord.Cube(-3, 1, 2)
-    hexes_in_line = [origin, coord.Cube(-1, 0, 1), coord.Cube(-2, 1, 1), target]
+    hexes_in_line = [origin, coord.Cube(-1, 0, 1), coord.Cube(-2, 1, 1),
+                     target]
     line = list(origin.line_to(target))
     assert hexes_in_line == line
 
@@ -127,3 +128,18 @@ def test_circle_around():
     flat_dist2 = itertools.chain(*dist2)
     everything = set([center]) | set(immediate) | set(flat_dist2)
     assert everything == set(center.circle_around(2))
+
+
+def test_circle_around_with_obstacles():
+    center = coord.Cube(0, 0, 0)
+    obstacles = [(1, 0, -1), (2, -1, -1), (2, -2, 0), (2, -3, 1), (1, -3, 2),
+                 (0, -2, 2), (-1, -1, 2), (-1, 0, 1), (-2, 1, 1), (-3, 1, 2),
+                 (-4, 1, 3), (-5, 1, 4), (1, 2, -3), (0, 2, -2), (-1, 2, -1)]
+    expected_within_3 = [center, (1, -1, 0), (1, -2, 1), (0, -1, 1),
+                         (0, 1, -1), (1, 1, -2), (2, 1, -3), (2, 0, -2),
+                         (-1, 1, 0), (-2, 2, 0), (-3, 3, 0), (-2, 3, -1),
+                         (-3, 2, 1)]
+    obstacles = set(map((lambda d: coord.Cube(*d)), obstacles))
+    expected_within_3 = set(map((lambda d: coord.Cube(*d)), expected_within_3))
+    result = set(center.circle_around(3, lambda x: x in obstacles))
+    assert expected_within_3 == result

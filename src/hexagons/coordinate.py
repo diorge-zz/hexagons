@@ -75,12 +75,40 @@ class Cube:
         for i in range(n + 1):
             yield (cube_lerp(self, target, i / n) + Cube._epsilon).round()
 
-    def circle_around(self, size):
-        """ The collection of hexagons in a circle of radius ''size'' """
-        for x in range(-size, size + 1):
-            for y in range(max(-size, -x - size), min(size, -x + size) + 1):
-                z = -(x + y)
-                yield self + Cube(x, y, z)
+    def circle_around(self, size, obstacles=None):
+        """
+        The collection of hexagons in a circle of radius ''size''
+        '''obstacles''' is an optional function returning True for a given
+           coordinate input if that coordinate is an obstacle
+        """
+        if obstacles is not None:
+            yield from self.floodfill(size, obstacles)
+        else:
+            for x in range(-size, size + 1):
+                start = max(-size, -x - size)
+                end = min(size, -x + size)
+                for y in range(start, end + 1):
+                    z = -(x + y)
+                    yield self + Cube(x, y, z)
+
+    def floodfill(self, size, obstacle):
+        """
+        The collection of hexagons reachable within ''size'' steps,
+        not stepping into any coordinate for which ''obstacle'' is True
+        """
+        visited = set([self])
+        reachable = [[self]]
+
+        for k in range(1, size + 1):
+            reachable.append([])
+            for cube in reachable[k - 1]:
+                neighbors = cube.neighbors()
+                for neighbor in neighbors:
+                    if neighbor not in visited and not obstacle(neighbor):
+                        print('visiting ', neighbor)
+                        visited.add(neighbor)
+                        reachable[k].append(neighbor)
+        return visited
 
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
