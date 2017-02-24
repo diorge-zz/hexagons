@@ -153,3 +153,13 @@ def test_rotate_right():
                 coord.Cube(3, 1, -4), coord.Cube(4, -1, -3)]
     result = [torotate.rotate_right(center, i) for i in range(1, 7)]
     assert expected == result
+
+
+def test_rotate_left():
+    center = coord.Cube(2, 0, -2)
+    torotate = coord.Cube(4, -1, -3)
+    expected = [coord.Cube(3, 1, -4), coord.Cube(1, 2, -3),
+                coord.Cube(0, 1, -1), coord.Cube(1, -1, 0),
+                coord.Cube(3, -2, -1), coord.Cube(4, -1, -3)]
+    result = [torotate.rotate_left(center, i) for i in range(1, 7)]
+    assert expected == result

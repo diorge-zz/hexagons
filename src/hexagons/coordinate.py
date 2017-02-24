@@ -113,7 +113,7 @@ class Cube:
     def rotate_right(self, center=None, amount=1):
         """
         Returns the point resulting in a rotation of ''self'' around
-        a ''center'', an ''amount'' of 60º rotations
+        a ''center'' to the right, an ''amount'' of 60º rotations
         """
         if center is None:
             center = Cube.origin
@@ -121,6 +121,19 @@ class Cube:
         for i in range(amount):
             x, y, z = point
             point = Cube(-z, -x, -y)
+        return point + center
+
+    def rotate_left(self, center=None, amount=1):
+        """
+        Returns the point resulting in a rotation of ''self'' around
+        a ''center'' to the left, an ''amount'' of 60º rotations
+        """
+        if center is None:
+            center = Cube.origin
+        point = self - center
+        for i in range(amount):
+            x, y, z = point
+            point = Cube(-y, -z, -x)
         return point + center
 
     def __add__(self, other):
