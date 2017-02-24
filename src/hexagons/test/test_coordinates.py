@@ -211,3 +211,14 @@ def test_basic_ray_vision():
     expected.remove(coord.Cube(3, 0, -3))
     result = set(center.basic_ray_vision(3, lambda x: x in obstacles))
     assert expected == result
+
+
+def test_facing_ring():
+    center = coord.Cube.origin
+    facing_direction = coord.Cube(1, 0, -1)
+    expected = set([coord.Cube(3, -3, 0), coord.Cube(3, -2, -1),
+                    coord.Cube(3, -1, -2), coord.Cube(3, 0, -3),
+                    coord.Cube(2, 1, -3), coord.Cube(1, 2, -3),
+                    coord.Cube(0, 3, -3)])
+    result = set(center.facing_ring(facing_direction, 3))
+    assert expected == result

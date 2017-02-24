@@ -167,6 +167,18 @@ class Cube:
                     break
         return result
 
+    def facing_ring(self, direction, size):
+        """
+        Return the ring of ''size'', with only the hexes
+        in a 120º vision of the facing ''direction''
+        """
+        horizon = (direction - self) * size
+        left_horizon = horizon.rotate_left(self)
+        right_horizon = horizon.rotate_right(self)
+        left_line = set(left_horizon.line_to(horizon))
+        right_line = set(right_horizon.line_to(horizon))
+        return left_line | right_line
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)
@@ -176,6 +188,9 @@ class Cube:
 
     def __sub__(self, other):
         return self + (-other)
+
+    def __mul__(self, scalar):
+        return Cube(self.x * scalar, self.y * scalar, self.z * scalar)
 
     def __eq__(self, other):
         return (self.x, self.y, self.z) == (other.x, other.y, other.z)
