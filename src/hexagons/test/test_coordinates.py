@@ -143,3 +143,13 @@ def test_circle_around_with_obstacles():
     expected_within_3 = set(map((lambda d: coord.Cube(*d)), expected_within_3))
     result = set(center.circle_around(3, lambda x: x in obstacles))
     assert expected_within_3 == result
+
+
+def test_rotate_right():
+    center = coord.Cube(2, 0, -2)
+    torotate = coord.Cube(4, -1, -3)
+    expected = [coord.Cube(3, -2, -1), coord.Cube(1, -1, 0),
+                coord.Cube(0, 1, -1), coord.Cube(1, 2, -3),
+                coord.Cube(3, 1, -4), coord.Cube(4, -1, -3)]
+    result = [torotate.rotate_right(center, i) for i in range(1, 7)]
+    assert expected == result

@@ -110,9 +110,28 @@ class Cube:
                         reachable[k].append(neighbor)
         return visited
 
+    def rotate_right(self, center=None, amount=1):
+        """
+        Returns the point resulting in a rotation of ''self'' around
+        a ''center'', an ''amount'' of 60º rotations
+        """
+        if center is None:
+            center = Cube.origin
+        point = self - center
+        for i in range(amount):
+            x, y, z = point
+            point = Cube(-z, -x, -y)
+        return point + center
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)
+
+    def __neg__(self):
+        return Cube(-self.x, -self.y, -self.z)
+
+    def __sub__(self, other):
+        return self + (-other)
 
     def __eq__(self, other):
         return (self.x, self.y, self.z) == (other.x, other.y, other.z)
@@ -128,6 +147,7 @@ class Cube:
         yield self.y
         yield self.z
 
+Cube.origin = Cube(0, 0, 0)
 Cube._neighbor_directions = (Cube(1, -1, 0), Cube(1, 0, -1), Cube(0, 1, -1),
                              Cube(-1, 1, 0), Cube(-1, 0, 1), Cube(0, -1, 1))
 Cube._diagonal_directions = (Cube(2, -1, -1), Cube(1, 1, -2), Cube(-1, 2, -1),
