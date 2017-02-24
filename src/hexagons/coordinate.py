@@ -4,6 +4,9 @@ Axial and cube coordinates for hexagons
 """
 
 
+import sys
+
+
 class Cube:
     """
     Cube coordinates for a hexagon
@@ -11,7 +14,7 @@ class Cube:
     """
 
     def __init__(self, x, y, z):
-        if x + y + z != 0:
+        if abs(x + y + z) > sys.float_info.epsilon:
             raise ValueError('Cube does not slice the x+y+z=0 plane')
         self._x = x
         self._y = y
@@ -45,6 +48,18 @@ class Cube:
         """ Calculates the distance between two hexagons """
         return max(abs(self.x - other.x), abs(self.y - other.y),
                    abs(self.z - other.z))
+
+    def round(self):
+        """ Rounds a floating point to the nearest hexagon """
+        rx, ry, rz = map(round, self)
+        dx, dy, dz = [abs(d - o) for (d, o) in zip((rx, ry, rz), self)]
+        if dx > dy and dx > dz:
+            rx = -(ry + rz)
+        elif dy > dz:
+            ry = -(rx + rz)
+        else:
+            rz = -(rx + ry)
+        return Cube(rx, ry, rz)
 
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """

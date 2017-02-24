@@ -89,3 +89,13 @@ def test_cube_distance():
     assert 0 == c.distance(c)
     assert all(1 == c.distance(n) for n in c.neighbors())
     assert 4 == c.distance(coord.Cube(-1, 4, -3))
+
+
+def test_cube_round_simple():
+    c = coord.Cube(0.1, 1.8, -1.9)
+    assert c.round() == coord.Cube(0, 2, -2)
+
+
+def test_cube_round_edge():
+    c = coord.Cube(0.4, 0.3, -0.7)
+    assert c.round() == coord.Cube(1, 0, -1)
