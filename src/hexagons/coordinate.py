@@ -37,6 +37,10 @@ class Cube:
         """ The neighbor cubes of the cube, assuming infinite grid """
         return map(lambda d: self + d, Cube._neighbor_directions)
 
+    def diagonals(self):
+        """ The coordinates of the six diagonal hexagons """
+        return map(lambda d: self + d, Cube._diagonal_directions)
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)
@@ -54,6 +58,8 @@ class Cube:
 
 Cube._neighbor_directions = (Cube(1, -1, 0), Cube(1, 0, -1), Cube(0, 1, -1),
                              Cube(-1, 1, 0), Cube(-1, 0, 1), Cube(0, -1, 1))
+Cube._diagonal_directions = (Cube(2, -1, -1), Cube(1, 1, -2), Cube(-1, 2, -1),
+                             Cube(-2, 1, 1), Cube(-1, -1, 2), Cube(1, -2, 1))
 
 
 class Axial:
