@@ -40,3 +40,9 @@ def test_iterable_cube():
     c = coord.Cube(-2, 0, 2)
     x, y, z = c
     assert (c.x, c.y, c.z) == (x, y, z)
+
+
+def test_iterable_axial():
+    c = coord.Axial(3, 5)
+    q, r = c
+    assert (c.q, c.r) == (q, r)

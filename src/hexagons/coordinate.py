@@ -72,3 +72,7 @@ class Axial:
 
     def __repr__(self):
         return 'Axial({q}, {r})'.format(q=self.q, r=self.r)
+
+    def __iter__(self):
+        yield self.q
+        yield self.r
