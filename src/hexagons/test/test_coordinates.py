@@ -14,6 +14,12 @@ def test_cube_getters():
     assert c.z == -1
 
 
+def test_axial_getters():
+    c = coord.Axial(1, -1)
+    assert c.q == 1
+    assert c.r == -1
+
+
 def test_cube_to_axis():
     assert coord.Cube(1, 2, -3).to_axial() == coord.Axial(1, -3)
     assert coord.Cube(-2, -3, 5).to_axial() == coord.Axial(-2, 5)
