@@ -33,6 +33,14 @@ class Cube:
         """ Converts the cube coordinate to an axial coordinate """
         return Axial(self.x, self.z)
 
+    def neighbors(self):
+        """ The neighbor cubes of the cube, assuming infinite grid """
+        return map(lambda d: self + d, Cube._neighbor_directions)
+
+    def __add__(self, other):
+        """ Coordinate-wise sum of two cube coordinates """
+        return Cube(self.x + other.x, self.y + other.y, self.z + other.z)
+
     def __eq__(self, other):
         return (self.x, self.y, self.z) == (other.x, other.y, other.z)
 
@@ -43,6 +51,9 @@ class Cube:
         yield self.x
         yield self.y
         yield self.z
+
+Cube._neighbor_directions = (Cube(1, -1, 0), Cube(1, 0, -1), Cube(0, 1, -1),
+                             Cube(-1, 1, 0), Cube(-1, 0, 1), Cube(0, -1, 1))
 
 
 class Axial:

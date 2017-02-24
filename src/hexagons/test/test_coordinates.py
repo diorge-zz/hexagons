@@ -46,3 +46,15 @@ def test_iterable_axial():
     c = coord.Axial(3, 5)
     q, r = c
     assert (c.q, c.r) == (q, r)
+
+
+def test_cube_neighbors():
+    c = coord.Cube(0, 0, 0)
+    n = list(c.neighbors())
+    assert len(n) == 6
+    assert coord.Cube(1, -1, 0) in n
+    assert coord.Cube(1, 0, -1) in n
+    assert coord.Cube(0, 1, -1) in n
+    assert coord.Cube(-1, 1, 0) in n
+    assert coord.Cube(-1, 0, 1) in n
+    assert coord.Cube(0, -1, 1) in n
