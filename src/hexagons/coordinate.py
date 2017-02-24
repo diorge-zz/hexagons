@@ -41,6 +41,11 @@ class Cube:
         """ The coordinates of the six diagonal hexagons """
         return map(lambda d: self + d, Cube._diagonal_directions)
 
+    def distance(self, other):
+        """ Calculates the distance between two hexagons """
+        return max(abs(self.x - other.x), abs(self.y - other.y),
+                   abs(self.z - other.z))
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)

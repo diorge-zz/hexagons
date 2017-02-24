@@ -82,3 +82,10 @@ def test_cube_diagonals():
     assert coord.Cube(2, -2, 0) in n
     assert coord.Cube(0, -1, 1) in n
     assert coord.Cube(2, 1, -3) in n
+
+
+def test_cube_distance():
+    c = coord.Cube(0, 0, 0)
+    assert 0 == c.distance(c)
+    assert all(1 == c.distance(n) for n in c.neighbors())
+    assert 4 == c.distance(coord.Cube(-1, 4, -3))
