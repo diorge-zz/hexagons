@@ -58,3 +58,15 @@ def test_cube_neighbors():
     assert coord.Cube(-1, 1, 0) in n
     assert coord.Cube(-1, 0, 1) in n
     assert coord.Cube(0, -1, 1) in n
+
+
+def test_axial_neighbors():
+    c = coord.Axial(5, 5)
+    n = list(c.neighbors())
+    assert len(n) == 6
+    assert coord.Axial(6, 5) in n
+    assert coord.Axial(6, 4) in n
+    assert coord.Axial(5, 4) in n
+    assert coord.Axial(4, 5) in n
+    assert coord.Axial(4, 6) in n
+    assert coord.Axial(5, 4) in n

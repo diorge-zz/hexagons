@@ -78,6 +78,11 @@ class Axial:
         """ Converts the axial coordinate to a cube coordinate """
         return Cube(self.q, -(self.q + self.r), self.r)
 
+    def neighbors(self):
+        """ The neighbor hexagons, assuming infinite grid """
+        return(map(lambda d: Axial(self.q + d.q, self.r + d.r),
+                   Axial._neighbor_directions))
+
     def __eq__(self, other):
         return (self.q, self.r) == (other.q, other.r)
 
@@ -87,3 +92,6 @@ class Axial:
     def __iter__(self):
         yield self.q
         yield self.r
+
+Axial._neighbor_directions = tuple(map(Cube.to_axial,
+                                       Cube._neighbor_directions))
