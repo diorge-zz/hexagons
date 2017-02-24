@@ -1,6 +1,6 @@
 """
-Module hexagons
-Hexagonal grids in python
+Module grid
+Grids for hexagons
 """
 
 
