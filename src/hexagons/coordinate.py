@@ -34,6 +34,9 @@ class Cube:
     def __eq__(self, other):
         return (self.x, self.y, self.z) == (other.x, other.y, other.z)
 
+    def __repr__(self):
+        return 'Cube({x}, {y}, {z})'.format(x=self.x, y=self.y, z=self.z)
+
 
 class Axial:
     """
@@ -53,5 +56,12 @@ class Axial:
     def r(self):
         return self._r
 
+    def to_cube(self):
+        """ Converts the axial coordinate to a cube coordinate """
+        return Cube(self.q, -(self.q + self.r), self.r)
+
     def __eq__(self, other):
         return (self.q, self.r) == (other.q, other.r)
+
+    def __repr__(self):
+        return 'Axial({q}, {r})'.format(q=self.q, r=self.r)
