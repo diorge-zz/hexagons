@@ -14,7 +14,7 @@ class Cube:
     """
 
     def __init__(self, x, y, z):
-        if abs(x + y + z) > sys.float_info.epsilon:
+        if abs(x + y + z) > 5 * sys.float_info.epsilon:
             raise ValueError('Cube does not slice the x+y+z=0 plane')
         self._x = x
         self._y = y
@@ -61,12 +61,29 @@ class Cube:
             rz = -(rx + ry)
         return Cube(rx, ry, rz)
 
+    def line_to(self, target):
+        """
+        Returns all hexes in a straight-line between ''self'' and ''target''
+        """
+        def lerp(a, b, t):
+            return a + (b - a) * t
+
+        def cube_lerp(a, b, t):
+            return Cube(*(lerp(ax, bx, t) for (ax, bx) in zip(a, b)))
+
+        n = self.distance(target)
+        for i in range(n + 1):
+            yield (cube_lerp(self, target, i / n) + Cube._epsilon).round()
+
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
         return Cube(self.x + other.x, self.y + other.y, self.z + other.z)
 
     def __eq__(self, other):
         return (self.x, self.y, self.z) == (other.x, other.y, other.z)
+
+    def __hash__(self):
+        return hash(tuple(self.__iter__()))
 
     def __repr__(self):
         return 'Cube({x}, {y}, {z})'.format(x=self.x, y=self.y, z=self.z)
@@ -80,6 +97,8 @@ Cube._neighbor_directions = (Cube(1, -1, 0), Cube(1, 0, -1), Cube(0, 1, -1),
                              Cube(-1, 1, 0), Cube(-1, 0, 1), Cube(0, -1, 1))
 Cube._diagonal_directions = (Cube(2, -1, -1), Cube(1, 1, -2), Cube(-1, 2, -1),
                              Cube(-2, 1, 1), Cube(-1, -1, 2), Cube(1, -2, 1))
+Cube._epsilon = Cube(sys.float_info.epsilon, sys.float_info.epsilon,
+                     -2 * sys.float_info.epsilon)
 
 
 class Axial:

@@ -99,3 +99,12 @@ def test_cube_round_simple():
 def test_cube_round_edge():
     c = coord.Cube(0.4, 0.3, -0.7)
     assert c.round() == coord.Cube(1, 0, -1)
+
+
+def test_line():
+    origin = coord.Cube(0, 0, 0)
+    target = coord.Cube(2, -4, 2)
+    hexes_in_line = [origin, coord.Cube(1, -1, 0), coord.Cube(1, -2, 1),
+                     coord.Cube(2, -3, 1), target]
+    line = origin.line_to(target)
+    assert set(hexes_in_line) == set(line)
