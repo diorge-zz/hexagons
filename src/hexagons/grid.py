@@ -14,5 +14,5 @@ class HexagonGrid:
 
     def inside_boundary(self, coord):
         """ Checks if a given axial coordinate is inside the grid """
-        x, y = coord
+        x, y = coord.q, coord.r
         return abs(x + y) <= self.size
