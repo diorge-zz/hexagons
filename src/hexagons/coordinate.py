@@ -39,6 +39,11 @@ class Cube:
     def __repr__(self):
         return 'Cube({x}, {y}, {z})'.format(x=self.x, y=self.y, z=self.z)
 
+    def __iter__(self):
+        yield self.x
+        yield self.y
+        yield self.z
+
 
 class Axial:
     """

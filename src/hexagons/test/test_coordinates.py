@@ -34,3 +34,9 @@ def test_invalid_cube():
     """ Cubes are invalid if they don't slice the x+y+z=0 plane """
     with pytest.raises(ValueError):
         c = coord.Cube(1, 2, 3)
+
+
+def test_iterable_cube():
+    c = coord.Cube(-2, 0, 2)
+    x, y, z = c
+    assert (c.x, c.y, c.z) == (x, y, z)
