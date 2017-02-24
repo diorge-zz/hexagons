@@ -108,3 +108,12 @@ def test_line():
                      coord.Cube(2, -3, 1), target]
     line = origin.line_to(target)
     assert set(hexes_in_line) == set(line)
+
+
+def test_line_order():
+    """ The line must be draw in the order from origin to target """
+    origin = coord.Cube(0, 0, 0)
+    target = coord.Cube(-3, 1, 2)
+    hexes_in_line = [origin, coord.Cube(-1, 0, 1), coord.Cube(-2, 1, 1), target]
+    line = list(origin.line_to(target))
+    assert hexes_in_line == line
