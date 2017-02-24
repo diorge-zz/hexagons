@@ -163,3 +163,38 @@ def test_rotate_left():
                 coord.Cube(3, -2, -1), coord.Cube(4, -1, -3)]
     result = [torotate.rotate_left(center, i) for i in range(1, 7)]
     assert expected == result
+
+
+def test_ring():
+    center = coord.Cube.origin
+    expected = set([coord.Cube(2, -2, 0), coord.Cube(2, -1, -1),
+                   coord.Cube(2, 0, -2), coord.Cube(1, 1, -2),
+                   coord.Cube(0, 2, -2), coord.Cube(-1, 2, -1),
+                   coord.Cube(-2, 2, 0), coord.Cube(-2, 1, 1),
+                   coord.Cube(-2, 0, 2), coord.Cube(-1, -1, 2),
+                   coord.Cube(0, -2, 2), coord.Cube(1, -2, 1)])
+    result = set(center.ring(2))
+    assert expected == result
+
+
+def test_ring_zero():
+    center = coord.Cube(1, 1, -2)
+    result = list(center.ring(0))
+    assert [center] == result
+
+
+def test_ring_one():
+    center = coord.Cube(5, -6, 1)
+    assert set(center.neighbors()) == set(center.ring(1))
+
+
+def test_ring_nonorigin():
+    center = coord.Cube(1, 0, -1)
+    expected = set([coord.Cube(3, -2, -1), coord.Cube(3, -1, -2),
+                    coord.Cube(3, 0, -3), coord.Cube(2, 1, -3),
+                    coord.Cube(1, 2, -3), coord.Cube(0, 2, -2),
+                    coord.Cube(-1, 2, -1), coord.Cube(-1, 1, 0),
+                    coord.Cube(-1, 0, 1), coord.Cube(0, -1, 1),
+                    coord.Cube(1, -2, 1), coord.Cube(2, -2, 0)])
+    result = set(center.ring(2))
+    assert expected == result

@@ -5,6 +5,7 @@ Axial and cube coordinates for hexagons
 
 
 import sys
+from itertools import permutations
 
 
 class Cube:
@@ -105,7 +106,6 @@ class Cube:
                 neighbors = cube.neighbors()
                 for neighbor in neighbors:
                     if neighbor not in visited and not obstacle(neighbor):
-                        print('visiting ', neighbor)
                         visited.add(neighbor)
                         reachable[k].append(neighbor)
         return visited
@@ -135,6 +135,21 @@ class Cube:
             x, y, z = point
             point = Cube(-y, -z, -x)
         return point + center
+
+    def ring(self, size):
+        """ Returns all points with distance ''size'' from ''self'' """
+        current = set()
+        first = size
+        for second in range(-size, 1):
+            third = -(first + second)
+            for perm in permutations([first, second, third]):
+                current.add(self + Cube(*perm))
+        first = -size
+        for second in range(0, size + 1):
+            third = -(first + second)
+            for perm in permutations([first, second, third]):
+                current.add(self + Cube(*perm))
+        return current
 
     def __add__(self, other):
         """ Coordinate-wise sum of two cube coordinates """
