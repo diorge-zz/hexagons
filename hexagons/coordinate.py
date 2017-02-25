@@ -3,6 +3,8 @@
     :synopsis: Axial and cube coordinates for hexagons
 
 .. moduleauthor:: Diorge Brognara <diorge.bs@gmail.com>
+
+Special thanks to Amit and his post: http://www.redblobgames.com/grids/hexagons
 """
 
 
