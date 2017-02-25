@@ -80,14 +80,16 @@ class HexagonGrid:
         """
         self.window_size = window_size
         self.hex_size = hex_size
-        self.center_hex = center_hex
         self.hex_format = hex_format
-
         self.size = HexagonGrid.determine_size(window_size, hex_size)
-        wx = wy = window_size / 2
         self.topleft_corner = Axial(-self.size, -self.size)
+        self.move_center(center_hex)
+
+    def move_center(self, new_center):
+        self.center_hex = new_center
+        wx = wy = self.window_size / 2
         sz = self.hex_size
-        c = center_hex - self.topleft_corner
+        c = new_center - self.topleft_corner
         if self.hex_format == 'flat':
             cx, cy = (sz * 3 / 2 * c.q, sz * sqrt(3) * (c.r + c.q / 2))
         else:
@@ -101,7 +103,7 @@ class HexagonGrid:
         :type coord: Axial
         :returns: bool - True if inside, False otherwise
         """
-        x, y = coord.q, coord.r
+        x, y = coord - self.center_hex
         return (abs(x + y) <= self.size and
                 abs(x) <= self.size and
                 abs(y) <= self.size)

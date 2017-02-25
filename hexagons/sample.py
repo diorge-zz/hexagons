@@ -28,6 +28,11 @@ def main():
     for pt in center_hex.to_cube().circle_around(g.size):
         colors[pt] = random_color()
 
+    def get_color(cubecoord):
+        if cubecoord not in colors:
+            colors[cubecoord] = random_color()
+        return colors[cubecoord]
+
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -36,11 +41,14 @@ def main():
                 pos = pygame.mouse.get_pos()
                 clicked = g.clicked_hex(pos)
                 if clicked is not None:
-                    colors[clicked.to_cube()] = random_color()
+                    if clicked == g.center_hex:
+                        colors[clicked.to_cube()] = random_color()
+                    else:
+                        g.move_center(clicked)
         for c in g.all_centers():
             cn = tuple(flat_corners(c, g.hex_size))
             ax = g.clicked_hex(c)
-            pygame.draw.polygon(display, colors[ax.to_cube()], cn)
+            pygame.draw.polygon(display, get_color(ax.to_cube()), cn)
         pygame.display.flip()
 
     pygame.quit()
