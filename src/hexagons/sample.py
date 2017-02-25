@@ -12,14 +12,18 @@ def random_color():
 
 
 size = 50
-g = grid.HexagonGrid(600, size, coord.Axial(0, 0), hex_format='flat')
+window = 600
+center_hex = coord.Axial(0, 0)
+hex_format = 'flat'
+
+g = grid.HexagonGrid(window, size, center_hex, hex_format=hex_format)
 pygame.init()
-display = pygame.display.set_mode((600, 600), pygame.HWSURFACE)
+display = pygame.display.set_mode((window, window), pygame.HWSURFACE)
 running = True
-n = len(list(g.all_centers()))
-colors = []
-for i in range(n):
-    colors.append(random_color())
+
+colors = {}
+for pt in center_hex.to_cube().circle_around(g.size):
+    colors[pt] = random_color()
 
 while running:
     for event in pygame.event.get():
@@ -27,10 +31,14 @@ while running:
             running = False
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
-            print(g.clicked_hex(pos))
+            clicked = g.clicked_hex(pos)
+            if clicked is not None:
+                colors[clicked.to_cube()] = random_color()
     i = 0
-    for c in g.hexagon_list():
-        pygame.draw.polygon(display, colors[i], c)
+    for c in g.all_centers():
+        cn = tuple(grid.flat_corners(c, g.hex_size))
+        ax = g.clicked_hex(c)
+        pygame.draw.polygon(display, colors[ax.to_cube()], cn)
         i += 1
     pygame.display.flip()
 
