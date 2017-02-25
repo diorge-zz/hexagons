@@ -222,3 +222,20 @@ def test_facing_ring():
                     coord.Cube(0, 3, -3)])
     result = set(center.facing_ring(facing_direction, 3))
     assert expected == result
+
+
+def test_facing_ray_vision():
+    center = coord.Cube.origin
+    facing_direction = coord.Cube(1, 0, -1)
+    size = 3
+    obstacle = coord.Cube(1, 0, -1)
+    expected = set([coord.Cube(0, 3, -3), coord.Cube(0, 2, -2),
+                    coord.Cube(0, 1, -1), coord.Cube(1, -1, 0),
+                    coord.Cube(2, -2, 0), coord.Cube(3, -3, 0),
+                    coord.Cube(1, 2, -3), coord.Cube(1, 1, -2),
+                    coord.Cube(3, -2, -1), coord.Cube(2, -1, -1),
+                    # the wall and the player are also visible
+                    coord.Cube(1, 0, -1), center])
+    result = center.facing_ray_vision(facing_direction, size,
+                                      lambda x: x == obstacle)
+    assert expected == result
