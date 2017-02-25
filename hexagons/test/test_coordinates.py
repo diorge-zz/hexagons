@@ -209,7 +209,7 @@ def test_basic_ray_vision():
     expected.remove(coord.Cube(0, -3, 3))
     expected.remove(coord.Cube(1, -3, 2))
     expected.remove(coord.Cube(3, 0, -3))
-    result = set(center.basic_ray_vision(3, lambda x: x in obstacles))
+    result = set(center.basic_ray_vision(lambda x: x in obstacles, size=3))
     assert expected == result
 
 

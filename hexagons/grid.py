@@ -1,16 +1,23 @@
 """
-Module grid
-Grids for hexagons
+.. module:: grid
+    :synopsis: Grids of hexagons and pixel conversions
+
+.. moduleauthor:: Diorge Brognara <diorge.bs@gmail.com>
 """
 
 
 from math import sqrt, floor, pi, cos, sin
-import coordinate as coord
+from hexagons.coordinate import Axial
 
 
 def flat_corners(center, size):
-    """
-    Return the six corners from a center point, for flat hexagons
+    """Calculates the six corner pixels for flat hexagons
+
+    :param center: central pixel of the hexagon
+    :type center: iterable of float (size 2)
+    :param size: the size of the hexagon, or half the longest corner
+    :type size: float
+    :returns: iterable of float -- collection of corners
     """
     for i in range(6):
         angle_deg = 60 * i
@@ -20,8 +27,13 @@ def flat_corners(center, size):
 
 
 def pointy_corners(center, size):
-    """
-    Return the six corners from a center point, for pointy hexagons
+    """Calculates the six corner pixels for pointy hexagons
+
+    :param center: central pixel of the hexagon
+    :type center: iterable of float (size 2)
+    :param size: the size of the hexagon, or half the longest corner
+    :type size: float
+    :returns: iterable of float -- collection of corners
     """
     for i in range(6):
         angle_deg = 60 * i + 30
@@ -31,16 +43,19 @@ def pointy_corners(center, size):
 
 
 class HexagonGrid:
-    """
-    Hexagonal grid of hexagonal tiles
+    """Hexagonal grid of hexagonal tiles
     """
 
     def __init__(self, window_size, hex_size, center_hex, hex_format='pointy'):
         """
         :param window_size: width/height pixels in the window (must be square)
+        :type window_size: float
         :param hex_size: size of the hexagons, in pixels
+        :type hex_size: float
         :param center_hex: axial coordinate of the center hex
+        :type center_hex: Axial
         :param hex_format: either 'flat' or 'pointy'
+        :type hex_format: str
         """
         self.window_size = window_size
         self.hex_size = hex_size
@@ -67,7 +82,7 @@ class HexagonGrid:
             raise ValueError('Unknown hex_format: ' + hex_format)
 
         wx = wy = window_size / 2
-        self.topleft_corner = coord.Axial(-self.size, -self.size)
+        self.topleft_corner = Axial(-self.size, -self.size)
         sz = self.hex_size
         c = center_hex - self.topleft_corner
         if self.hex_format == 'flat':
@@ -77,24 +92,30 @@ class HexagonGrid:
         self.dx, self.dy = wx - cx, wy - cy
 
     def inside_boundary(self, coord):
-        """ Checks if a given axial coordinate is inside the grid """
+        """Checks if a given axial coordinate is inside the grid
+
+        :param coord: coordinate to be tested against the grid
+        :type coord: Axial
+        :returns: bool - True if inside, False otherwise
+        """
         x, y = coord.q, coord.r
         return (abs(x + y) <= self.size and
                 abs(x) <= self.size and
                 abs(y) <= self.size)
 
     def hexagon_list(self):
-        """
-        A sequence of tuples, each representing the six corners of a hexagon,
-        in pixels
+        """A sequence of hexagons
+
+        Each hexagon is represented by a 6-tuple of points (2-tuples, pixels)
         """
         cn = pointy_corners if self.hex_format == 'pointy' else flat_corners
         for c in self.all_centers():
             yield tuple(cn(c, self.hex_size))
 
     def all_centers(self):
-        """
-        The center of every hexagon in the grid, in pixels
+        """A sequence of hexagon centers
+
+        Each center is represented as a 2-tuple of floats (pixels)
         """
         size = self.hex_size
         cn = self.center_hex
@@ -109,9 +130,14 @@ class HexagonGrid:
                        size * 3 / 2 * pt.r + self.dy)
 
     def clicked_hex(self, mousepos):
-        """
-        Gets the axial coordinate of a click
-        Returns None if no hex was clicked
+        """Gets the hexagon clicked
+
+        Calculates which hexagon is in a given window position,
+        returns None if no hexagon was clicked
+
+        :param mousepos: point clicked in the window
+        :type mousepos: tuple of float
+        :returns: Axial or None
         """
         x, y = mousepos
         x = x - self.dx
@@ -123,7 +149,7 @@ class HexagonGrid:
         else:
             q = (x * (sqrt(3) / 3) - (y / 3)) / size
             r = y * ((2 / 3) / size)
-        c = coord.Axial(q, r).to_cube().round().to_axial()
+        c = Axial(q, r).to_cube().round().to_axial()
         c = c + self.topleft_corner
         if self.inside_boundary(c):
             return c
