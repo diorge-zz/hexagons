@@ -57,7 +57,7 @@ class HexagonGrid:
         :type window_size: float
         :param hex_size: size of the hexagon, in pixels
         :type hex_size: float
-        :returns: int
+        :returns: int -- number of hexagons in the grid radius
         """
         bigger = hex_size * 2
         smaller = (bigger * sqrt(3)) / 2
@@ -66,6 +66,22 @@ class HexagonGrid:
             return (total - 2) // 2
         else:
             return (total - 1) // 2
+
+    @staticmethod
+    def determine_hex_size(window_size, size):
+        """Analogous to finding the grid size,
+        but in the opposite direction
+
+        :param window_size: pixes in the window square
+        :type window_size: float
+        :param size: number of hexagons in the grid radius
+        :type size: int
+        :returns: float -- size of the hexagon, in pixels
+        """
+        total = size * 2 + 1
+        smaller = window_size / total
+        bigger = smaller / (sqrt(3) / 2)
+        return bigger / 2
 
     def __init__(self, window_size, hex_size, center_hex, hex_format='pointy'):
         """

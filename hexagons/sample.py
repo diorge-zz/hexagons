@@ -13,12 +13,12 @@ def main():
         b = random.randint(0, 255)
         return pygame.Color(r, g, b, 255)
 
-    size = 50
+    hex_size = 50
     window_size = 600
     center_hex = Axial(0, 0)
     hex_format = 'flat'
 
-    g = HexagonGrid(window_size, size, center_hex, hex_format=hex_format)
+    g = HexagonGrid(window_size, hex_size, center_hex, hex_format=hex_format)
     pygame.init()
     display = pygame.display.set_mode((window_size, window_size),
                                       pygame.HWSURFACE)
