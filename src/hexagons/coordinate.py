@@ -250,6 +250,15 @@ class Axial:
     def __eq__(self, other):
         return (self.q, self.r) == (other.q, other.r)
 
+    def __add__(self, other):
+        return Axial(self.q + other.q, self.r + other.r)
+
+    def __neg__(self):
+        return Axial(-self.q, -self.r)
+
+    def __sub__(self, other):
+        return self + (-other)
+
     def __repr__(self):
         return 'Axial({q}, {r})'.format(q=self.q, r=self.r)
 
