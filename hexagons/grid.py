@@ -83,21 +83,33 @@ class HexagonGrid:
         bigger = smaller / (sqrt(3) / 2)
         return bigger / 2
 
-    def __init__(self, window_size, hex_size, center_hex, hex_format='pointy'):
-        """
+    def __init__(self, window_size, center_hex, hex_format='pointy',
+                 grid_size=0, hex_size=0):
+        """Creates a new hexagonal grid
+
+        Prefers to use grid_size instead of hex_size if that variable is set.
+        One of these two variables must be set.
+
         :param window_size: width/height pixels in the window (must be square)
         :type window_size: float
-        :param hex_size: size of the hexagons, in pixels
-        :type hex_size: float
         :param center_hex: axial coordinate of the center hex
         :type center_hex: Axial
         :param hex_format: either 'flat' or 'pointy'
         :type hex_format: str
+        :param grid_size: size of the grid, in hexagons
+        :type grid_size: int
+        :param hex_size: size of the hexagons, in pixels
+        :type hex_size: float
         """
+        if grid_size > 0:
+            self.size = grid_size
+            self.hex_size = HexagonGrid.determine_hex_size(window_size,
+                                                           grid_size)
+        else:
+            self.hex_size = hex_size
+            self.size = HexagonGrid.determine_size(window_size, hex_size)
         self.window_size = window_size
-        self.hex_size = hex_size
         self.hex_format = hex_format
-        self.size = HexagonGrid.determine_size(window_size, hex_size)
         self.topleft_corner = Axial(-self.size, -self.size)
         self.move_center(center_hex)
 
