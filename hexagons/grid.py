@@ -46,6 +46,27 @@ class HexagonGrid:
     """Hexagonal grid of hexagonal tiles
     """
 
+    @staticmethod
+    def determine_size(window_size, hex_size):
+        """Calculates how many hexagons can be fit in the grid
+
+        Similar to each hexagon side, this side is the "radius"
+        of the hexagon grid
+
+        :param window_size: pixels in the window square
+        :type window_size: float
+        :param hex_size: size of the hexagon, in pixels
+        :type hex_size: float
+        :returns: int
+        """
+        bigger = hex_size * 2
+        smaller = (bigger * sqrt(3)) / 2
+        total = floor(window_size / smaller)
+        if total % 2 == 0:
+            return (total - 2) // 2
+        else:
+            return (total - 1) // 2
+
     def __init__(self, window_size, hex_size, center_hex, hex_format='pointy'):
         """
         :param window_size: width/height pixels in the window (must be square)
@@ -62,25 +83,7 @@ class HexagonGrid:
         self.center_hex = center_hex
         self.hex_format = hex_format
 
-        if hex_format == 'flat':
-            self.hex_width = hex_size * 2
-            self.hex_height = (self.hex_width * sqrt(3)) / 2
-            self.size = floor(self.window_size / self.hex_height)
-            if self.size % 2 == 0:
-                self.size = (self.size - 2) // 2
-            else:
-                self.size = (self.size - 1) // 2
-        elif hex_format == 'pointy':
-            self.hex_height = hex_size * 2
-            self.hex_width = (self.hex_height * sqrt(3)) / 2
-            self.size = floor(self.window_size / self.hex_width)
-            if self.size % 2 == 0:
-                self.size = (self.size - 2) // 2
-            else:
-                self.size = (self.size - 1) // 2
-        else:
-            raise ValueError('Unknown hex_format: ' + hex_format)
-
+        self.size = HexagonGrid.determine_size(window_size, hex_size)
         wx = wy = window_size / 2
         self.topleft_corner = Axial(-self.size, -self.size)
         sz = self.hex_size
