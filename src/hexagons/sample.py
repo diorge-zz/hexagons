@@ -1,5 +1,4 @@
 import pygame
-from pygame.locals import QUIT
 import grid
 import coordinate as coord
 import random
@@ -24,8 +23,11 @@ for i in range(n):
 
 while running:
     for event in pygame.event.get():
-        if event.type == QUIT:
+        if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            print(g.clicked_hex(pos))
     i = 0
     for c in g.hexagon_list():
         pygame.draw.polygon(display, colors[i], c)
