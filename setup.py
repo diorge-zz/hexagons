@@ -23,7 +23,6 @@ setup(
     packages=['hexagons'],
     description='Hexagon grids for games',
     tests_require=['pytest'],
-    install_requires=['pygame>=1.9.3'],
     cmdclass={'test': PyTest},
     test_suite='hexagons.test',
     extras_require={'testing': ['pytest']}
