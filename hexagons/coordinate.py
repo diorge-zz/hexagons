@@ -434,5 +434,8 @@ class Axial:
         yield self.q
         yield self.r
 
+    def __hash__(self):
+        return hash(self.to_cube())
+
 Axial._neighbor_directions = tuple(map(Cube.to_axial,
                                        Cube._neighbor_directions))
