@@ -6,44 +6,19 @@
 """
 
 
+from collections import namedtuple
 from math import sqrt, floor, pi, cos, sin
 from hexagons.coordinate import Axial
 
 
-def flat_corners(center, size):
-    """Calculates the six corner pixels for flat hexagons
-
-    :param center: central pixel of the hexagon
-    :type center: iterable of float (size 2)
-    :param size: the size of the hexagon, or half the longest corner
-    :type size: float
-    :returns: iterable of float -- collection of corners
-    """
-    for i in range(6):
-        angle_deg = 60 * i
-        angle_rad = pi / 180 * angle_deg
-        x, y = center
-        yield (x + size * cos(angle_rad), y + size * sin(angle_rad))
-
-
-def pointy_corners(center, size):
-    """Calculates the six corner pixels for pointy hexagons
-
-    :param center: central pixel of the hexagon
-    :type center: iterable of float (size 2)
-    :param size: the size of the hexagon, or half the longest corner
-    :type size: float
-    :returns: iterable of float -- collection of corners
-    """
-    for i in range(6):
-        angle_deg = 60 * i + 30
-        angle_rad = pi / 180 * angle_deg
-        x, y = center
-        yield (x + size * cos(angle_rad), y + size * sin(angle_rad))
+Hex = namedtuple('Hex', ['axiscoord', 'pixelcenter', 'pixelcorners'])
 
 
 class HexagonGrid:
     """Hexagonal grid of hexagonal tiles
+
+    Note the grid itself will be the opposite of the hexes --
+    if the hexes are pointy, the hexagon-grid is flat, and vice-versa.
     """
 
     @staticmethod
@@ -64,8 +39,7 @@ class HexagonGrid:
         total = floor(window_size / smaller)
         if total % 2 == 0:
             return (total - 2) // 2
-        else:
-            return (total - 1) // 2
+        return (total - 1) // 2
 
     @staticmethod
     def determine_hex_size(window_size, size):
@@ -82,6 +56,40 @@ class HexagonGrid:
         smaller = window_size / total
         bigger = smaller / (sqrt(3) / 2)
         return bigger / 2
+
+    @staticmethod
+    def _flat_corners(center, size):
+        """Calculates the six corner pixels for flat hexagons
+
+        :param center: central pixel of the hexagon
+        :type center: iterable of float (size 2)
+        :param size: the size of the hexagon, or half the longest corner
+        :type size: float
+        :returns: iterable of float -- collection of corners
+        """
+        for i in range(6):
+            angle_deg = 60 * i
+            angle_rad = pi / 180 * angle_deg
+            centerx, centery = center
+            yield (centerx + size * cos(angle_rad),
+                   centery + size * sin(angle_rad))
+
+    @staticmethod
+    def _pointy_corners(center, size):
+        """Calculates the six corner pixels for pointy hexagons
+
+        :param center: central pixel of the hexagon
+        :type center: iterable of float (size 2)
+        :param size: the size of the hexagon, or half the longest corner
+        :type size: float
+        :returns: iterable of float -- collection of corners
+        """
+        for i in range(6):
+            angle_deg = 60 * i + 30
+            angle_rad = pi / 180 * angle_deg
+            centerx, centery = center
+            yield (centerx + size * cos(angle_rad),
+                   centery + size * sin(angle_rad))
 
     def __init__(self, window_size, center_hex, hex_format='pointy',
                  grid_size=0, hex_size=0):
@@ -103,8 +111,7 @@ class HexagonGrid:
         """
         if grid_size > 0:
             self.size = grid_size
-            self.hex_size = HexagonGrid.determine_hex_size(window_size,
-                                                           grid_size)
+            self.hex_size = HexagonGrid.determine_hex_size(window_size, grid_size)
         else:
             self.hex_size = hex_size
             self.size = HexagonGrid.determine_size(window_size, hex_size)
@@ -114,15 +121,22 @@ class HexagonGrid:
         self.move_center(center_hex)
 
     def move_center(self, new_center):
+        """Sets the hex in the center of the grid
+
+        :param new_center: coordinate of the center of the grid
+        :type new_center: Axial
+        """
         self.center_hex = new_center
-        wx = wy = self.window_size / 2
-        sz = self.hex_size
-        c = new_center - self.topleft_corner
+        window_x = window_y = self.window_size / 2
+        offset_center = new_center - self.topleft_corner
         if self.hex_format == 'flat':
-            cx, cy = (sz * 3 / 2 * c.q, sz * sqrt(3) * (c.r + c.q / 2))
+            pixelx = self.hex_size * 3 / 2 * offset_center.q
+            pixely = self.hex_size * sqrt(3) * (offset_center.r + offset_center.q / 2)
         else:
-            cx, cy = (sz * sqrt(3) * (c.q + c.r / 2), sz * 3 / 2 * c.r)
-        self.dx, self.dy = wx - cx, wy - cy
+            pixelx = self.hex_size * sqrt(3) * (offset_center.q + offset_center.r / 2)
+            pixely = self.hex_size * 3 / 2 * offset_center.r
+        self.xoffset = window_x - pixelx
+        self.yoffset = window_y - pixely
 
     def inside_boundary(self, coord):
         """Checks if a given axial coordinate is inside the grid
@@ -131,36 +145,46 @@ class HexagonGrid:
         :type coord: Axial
         :returns: bool - True if inside, False otherwise
         """
-        x, y = coord - self.center_hex
-        return (abs(x + y) <= self.size and
-                abs(x) <= self.size and
-                abs(y) <= self.size)
+        coordx, coordy = coord - self.center_hex
+        return (abs(coordx + coordy) <= self.size and
+                abs(coordx) <= self.size and
+                abs(coordy) <= self.size)
 
     def hexagon_list(self):
         """A sequence of hexagons
 
-        Each hexagon is represented by a 6-tuple of points (2-tuples, pixels)
+        Hexagons are represented by triplets containing the axial coordinate,
+        the center pixel (a 2-tuple), and the corner pixels (a 6-tuple of 2-tuples)
         """
-        cn = pointy_corners if self.hex_format == 'pointy' else flat_corners
-        for c in self.all_centers():
-            yield tuple(cn(c, self.hex_size))
+        axial = [p.to_axial()
+                 for p in self.center_hex.to_cube().circle_around(self.size)]
+        centers = list(self.all_centers(axial))
 
-    def all_centers(self):
-        """A sequence of hexagon centers
+        if self.hex_format == 'pointy':
+            corner_function = HexagonGrid._pointy_corners
+        else:
+            corner_function = HexagonGrid._flat_corners
+
+        corners = tuple(tuple(corner_function(c, self.hex_size))
+                        for c in centers)
+
+        return list(map(Hex, axial, centers, corners))
+
+    def all_centers(self, axial_points):
+        """Returns the pixel centers of the axial coordinates given
 
         Each center is represented as a 2-tuple of floats (pixels)
         """
         size = self.hex_size
-        cn = self.center_hex
-        pts = [p.to_axial() for p in cn.to_cube().circle_around(self.size)]
-        for pt in pts:
-            pt = pt - self.topleft_corner
+        for point in axial_points:
+            offset_point = point - self.topleft_corner
+            qcoord, rcoord = offset_point
             if self.hex_format == 'flat':
-                yield (size * 3 / 2 * pt.q + self.dx,
-                       size * sqrt(3) * (pt.r + pt.q / 2) + self.dy)
+                yield (size * 3 / 2 * qcoord + self.xoffset,
+                       size * sqrt(3) * (rcoord + qcoord / 2) + self.yoffset)
             else:
-                yield (size * sqrt(3) * (pt.q + pt.r / 2) + self.dx,
-                       size * 3 / 2 * pt.r + self.dy)
+                yield (size * sqrt(3) * (qcoord + rcoord / 2) + self.xoffset,
+                       size * 3 / 2 * rcoord + self.yoffset)
 
     def clicked_hex(self, mousepos):
         """Gets the hexagon clicked
@@ -172,19 +196,18 @@ class HexagonGrid:
         :type mousepos: tuple of float
         :returns: Axial or None
         """
-        x, y = mousepos
-        x = x - self.dx
-        y = y - self.dy
+        mousex, mousey = mousepos
+        mousex = mousex - self.xoffset
+        mousey = mousey - self.yoffset
         size = self.hex_size
         if self.hex_format == 'flat':
-            q = x * (2 / 3) / size
-            r = ((-x / 3) + (sqrt(3) / 3) * y) / size
+            hexq = mousex * (2 / 3) / size
+            hexr = ((-mousex / 3) + (sqrt(3) / 3) * mousey) / size
         else:
-            q = (x * (sqrt(3) / 3) - (y / 3)) / size
-            r = y * ((2 / 3) / size)
-        c = Axial(q, r).to_cube().round().to_axial()
-        c = c + self.topleft_corner
-        if self.inside_boundary(c):
-            return c
-        else:
-            return None
+            hexq = (mousex * (sqrt(3) / 3) - (mousey / 3)) / size
+            hexr = mousey * ((2 / 3) / size)
+        absolute_hex = Axial(hexq, hexr).to_cube().round().to_axial()
+        offset_hex = absolute_hex + self.topleft_corner
+        if self.inside_boundary(offset_hex):
+            return offset_hex
+        return None

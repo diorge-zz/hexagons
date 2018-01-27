@@ -3,7 +3,7 @@
 from collections import defaultdict
 import random
 import pygame
-from hexagons.grid import HexagonGrid, flat_corners
+from hexagons.grid import HexagonGrid
 from hexagons.coordinate import Axial
 
 
@@ -17,7 +17,7 @@ def main():
     grid_size = 4
     window_size = 600
     center_hex = Axial(0, 0)
-    hex_format = 'flat'
+    hex_format = 'pointy'
 
     def next_letter(letter):
         idx = letters.index(letter)
@@ -43,15 +43,16 @@ def main():
                     #if clicked == g.center_hex:
                     letter_mapping[clicked] = next_letter(letter_mapping[clicked])
 
-        for c in g.all_centers():
-            cn = tuple(flat_corners(c, g.hex_size))
-            ax = g.clicked_hex(c)
+        for ax, c, cn in g.hexagon_list():
             pygame.draw.polygon(display, white, cn)
             pygame.draw.polygon(display, black, cn, 1)
             letter = letter_mapping[ax]
             if letter != ' ':
                 letterdisplay = font.render(letter, True, black)
-                display.blit(letterdisplay, (cn[4][0] + 10, cn[4][1] + 10))
+                textwidth, textheight = font.size(letter)
+                x = c[0] - (textwidth / 2)
+                y = c[1] - (textheight / 2)
+                display.blit(letterdisplay, (x, y))
 
         pygame.display.flip()
 

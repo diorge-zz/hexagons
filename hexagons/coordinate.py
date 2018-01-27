@@ -33,8 +33,8 @@ class Cube:
                   you may wish to use :func:`Cube.round` before you apply
                   these operations.
         """
-        if abs(x + y + z) > 5 * sys.float_info.epsilon:
-            raise ValueError('Cube does not slice the x+y+z=0 plane')
+        if abs(x + y + z) > 0.5:
+            raise ValueError(f'Cube ({x}, {y}, {z}) does not slice the x+y+z=0 plane')
         self._x = x
         self._y = y
         self._z = z

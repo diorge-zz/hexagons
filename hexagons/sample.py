@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import pygame
-from hexagons.grid import HexagonGrid, flat_corners
+from hexagons.grid import HexagonGrid
 from hexagons.coordinate import Axial
 import random
 
@@ -47,9 +47,7 @@ def main():
                         colors[clicked.to_cube()] = random_color()
                     else:
                         g.move_center(clicked)
-        for c in g.all_centers():
-            cn = tuple(flat_corners(c, g.hex_size))
-            ax = g.clicked_hex(c)
+        for ax, c, cn in g.hexagon_list():
             pygame.draw.polygon(display, get_color(ax.to_cube()), cn)
         pygame.display.flip()
 
