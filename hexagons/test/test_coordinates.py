@@ -165,7 +165,7 @@ def test_rotate_left():
     assert expected == result
 
 
-def test_ring():
+def test_circumference():
     center = coord.Cube.origin
     expected = set([coord.Cube(2, -2, 0), coord.Cube(2, -1, -1),
                    coord.Cube(2, 0, -2), coord.Cube(1, 1, -2),
@@ -173,22 +173,22 @@ def test_ring():
                    coord.Cube(-2, 2, 0), coord.Cube(-2, 1, 1),
                    coord.Cube(-2, 0, 2), coord.Cube(-1, -1, 2),
                    coord.Cube(0, -2, 2), coord.Cube(1, -2, 1)])
-    result = set(center.ring(2))
+    result = set(center.circumference(2))
     assert expected == result
 
 
-def test_ring_zero():
+def test_circumference_zero():
     center = coord.Cube(1, 1, -2)
-    result = list(center.ring(0))
+    result = list(center.circumference(0))
     assert [center] == result
 
 
-def test_ring_one():
+def test_circumference_one():
     center = coord.Cube(5, -6, 1)
-    assert set(center.neighbors()) == set(center.ring(1))
+    assert set(center.neighbors()) == set(center.circumference(1))
 
 
-def test_ring_nonorigin():
+def test_circumference_nonorigin():
     center = coord.Cube(1, 0, -1)
     expected = set([coord.Cube(3, -2, -1), coord.Cube(3, -1, -2),
                     coord.Cube(3, 0, -3), coord.Cube(2, 1, -3),
@@ -196,7 +196,7 @@ def test_ring_nonorigin():
                     coord.Cube(-1, 2, -1), coord.Cube(-1, 1, 0),
                     coord.Cube(-1, 0, 1), coord.Cube(0, -1, 1),
                     coord.Cube(1, -2, 1), coord.Cube(2, -2, 0)])
-    result = set(center.ring(2))
+    result = set(center.circumference(2))
     assert expected == result
 
 
@@ -213,14 +213,14 @@ def test_basic_ray_vision():
     assert expected == result
 
 
-def test_facing_ring():
+def test_arc():
     center = coord.Cube.origin
     facing_direction = coord.Cube(1, 0, -1)
     expected = set([coord.Cube(3, -3, 0), coord.Cube(3, -2, -1),
                     coord.Cube(3, -1, -2), coord.Cube(3, 0, -3),
                     coord.Cube(2, 1, -3), coord.Cube(1, 2, -3),
                     coord.Cube(0, 3, -3)])
-    result = set(center.facing_ring(facing_direction, 3))
+    result = set(center.arc(facing_direction, 3))
     assert expected == result
 
 

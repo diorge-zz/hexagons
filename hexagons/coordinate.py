@@ -226,23 +226,21 @@ class Cube:
             point = Cube(-y, -z, -x)
         return point + center
 
-    def ring(self, size):
-        """Returns a ring centered around this point
+    def circumference(self, radius):
+        """Returns the circumference around this point
 
-        A ring is all the points with the same distance from a given point.
-
-        :param size: the fixed distance from the center
-        :type size: int
+        :param radius: the fixed distance from the center
+        :type radius: int
         :returns: iterable of Cube -- the ring
         """
         current = set()
-        first = size
-        for second in range(-size, 1):
+        first = radius
+        for second in range(-radius, 1):
             third = -(first + second)
             for perm in permutations([first, second, third]):
                 current.add(self + Cube(*perm))
-        first = -size
-        for second in range(0, size + 1):
+        first = -radius
+        for second in range(0, radius + 1):
             third = -(first + second)
             for perm in permutations([first, second, third]):
                 current.add(self + Cube(*perm))
@@ -264,7 +262,7 @@ class Cube:
         :returns: iterable of Cube -- visible hexagons
         """
         if outer_ring is None:
-            outer_ring = self.ring(size)
+            outer_ring = self.circumference(size)
         result = set()
         for pt in outer_ring:
             line = self.line_to(pt)
@@ -274,14 +272,14 @@ class Cube:
                     break
         return result
 
-    def facing_ring(self, direction, size):
-        """Returns the ring within a 120 degree vision
+    def arc(self, direction, size):
+        """Returns the arc within a 120 degree vision
 
         :param direction: facing direction from self (a neighbor)
         :type direction: Cube
         :param size: size of the ring
         :type size: int
-        :returns: iterable of Cube -- visible members of the ring
+        :returns: iterable of Cube -- visible members of the arc
         """
         horizon = (direction - self) * size
         left_horizon = horizon.rotate_left(self)
@@ -301,7 +299,7 @@ class Cube:
         :type obstacle: callable
         :returns: iterable of Cube -- visible hexagons
         """
-        outer_ring = self.facing_ring(direction, size)
+        outer_ring = self.arc(direction, size)
         return self.basic_ray_vision(obstacle, outer_ring=outer_ring)
 
     def __add__(self, other):
