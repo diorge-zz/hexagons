@@ -91,9 +91,10 @@ class Cube:
     def distance(self, other):
         """Calculates the distance between two hexagons
 
-        Uses Manhattan distance.
+        The distance is the number of hexes needed to traverse
+        to get from one point to the other
 
-        :returns: int or float -- Manhattan distance
+        :returns: int or float
         """
         return max(abs(self.x - other.x), abs(self.y - other.y),
                    abs(self.z - other.z))
