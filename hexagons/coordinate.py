@@ -246,32 +246,6 @@ class Cube:
                 current.add(self + Cube(*perm))
         return current
 
-    def basic_ray_vision(self, obstacle, size=0, outer_ring=None):
-        """Performs line view to the ring of a given size
-
-        Returns all the visible points according to a line-view,
-        or all the points that are in line between the center
-        and some point in the ring but not blocked by obstacles.
-
-        :param size: size of the ring, used if ``outer_ring`` is None
-        :type size: int
-        :param obstacle: function returning True for obstacle coordinates
-        :type obstacle: callable
-        :param outer_ring: collection of points to be scanned to
-        :type outer_ring: iterable of Cube
-        :returns: iterable of Cube -- visible hexagons
-        """
-        if outer_ring is None:
-            outer_ring = self.circumference(size)
-        result = set()
-        for pt in outer_ring:
-            line = self.line_to(pt)
-            for possible in line:
-                result.add(possible)
-                if obstacle(possible):
-                    break
-        return result
-
     def arc(self, direction, size):
         """Returns the arc within a 120 degree vision
 
@@ -287,20 +261,6 @@ class Cube:
         left_line = set(left_horizon.line_to(horizon))
         right_line = set(right_horizon.line_to(horizon))
         return left_line | right_line
-
-    def facing_ray_vision(self, direction, size, obstacle):
-        """Performs a basic ray vision against a facing ring
-
-        :param direction: facing direction frmo self (a neighbor)
-        :type direction: Cube
-        :param size: size of the ring
-        :type size: int
-        :param obstacle: function returning True for obstacle coordinates
-        :type obstacle: callable
-        :returns: iterable of Cube -- visible hexagons
-        """
-        outer_ring = self.arc(direction, size)
-        return self.basic_ray_vision(obstacle, outer_ring=outer_ring)
 
     def __add__(self, other):
         """Coordinate-wise addition
