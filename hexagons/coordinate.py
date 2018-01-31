@@ -19,6 +19,8 @@ class Cube:
     .. note:: x + y + z = 0 (or very close to it, there's some tolerance)
     """
 
+    TOLERANCE = 0.5
+
     def __init__(self, x, y, z):
         """Creates a new immutable cube coordinate from points x, y, z
 
@@ -33,7 +35,7 @@ class Cube:
                   you may wish to use :func:`Cube.round` before you apply
                   these operations.
         """
-        if abs(x + y + z) > 0.5:
+        if abs(x + y + z) > Cube.TOLERANCE:
             raise ValueError(f'Cube ({x}, {y}, {z}) does not slice the x+y+z=0 plane')
         self._x = x
         self._y = y
