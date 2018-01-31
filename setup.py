@@ -16,10 +16,11 @@ class PyTest(TestCommand):
 
 setup(
     name='hexagons',
-    version='0.0.1.0',
+    version='0.1.0.0',
     license='MIT License',
     author='Diorge Brognara',
     author_email='diorge.bs@gmail.com',
+    url='https://github.com/diorge/hexagons',
     packages=['hexagons'],
     description='Hexagon grids for games',
     tests_require=['pytest'],
