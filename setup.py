@@ -16,7 +16,7 @@ class PyTest(TestCommand):
 
 setup(
     name='hexagons',
-    version='0.1.0.0',
+    version='0.1.1.0',
     license='MIT License',
     author='Diorge Brognara',
     author_email='diorge.bs@gmail.com',
