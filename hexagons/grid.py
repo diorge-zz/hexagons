@@ -156,18 +156,11 @@ class HexagonGrid:
         Hexagons are represented by triplets containing the axial coordinate,
         the center pixel (a 2-tuple), and the corner pixels (a 6-tuple of 2-tuples)
         """
-        axial = [p.to_axial()
-                 for p in self.center_hex.to_cube().circle_around(self.size)]
-        centers = list(self.all_centers(axial))
-
-        if self.hex_format == 'pointy':
-            corner_function = HexagonGrid._pointy_corners
-        else:
-            corner_function = HexagonGrid._flat_corners
-
-        corners = tuple(tuple(corner_function(c, self.hex_size))
-                        for c in centers)
-
+        axial = tuple(p.to_axial()
+                      for p in self.center_hex.to_cube().circle_around(self.size))
+        centers = tuple(self.get_center(coord) for coord in axial)
+        corners = tuple(tuple(self.center_to_corners(center))
+                        for center in centers)
         return list(map(Hex, axial, centers, corners))
 
     def all_centers(self, axial_points):
@@ -192,6 +185,18 @@ class HexagonGrid:
             centerx = self.hex_size * sqrt(3) * (qcoord + rcoord / 2) + self.xoffset
             centery = self.hex_size * 3 / 2 * rcoord + self.yoffset
         return (centerx, centery)
+
+    def center_to_corners(self, center):
+        """Converts the pixel center of a hexagon to it's pixel corners
+        """
+        corner_function = (HexagonGrid._flat_corners if self.hex_format == 'flat'
+                           else HexagonGrid._pointy_corners)
+        return corner_function(center, self.hex_size)
+
+    def coord_to_corners(self, axial):
+        """Converts an axial coordinate to it's pixel corners
+        """
+        return self.center_to_corners(self.get_center(axial))
 
     def clicked_hex(self, mousepos):
         """Gets the hexagon clicked
