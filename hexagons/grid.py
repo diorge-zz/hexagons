@@ -175,16 +175,23 @@ class HexagonGrid:
 
         Each center is represented as a 2-tuple of floats (pixels)
         """
-        size = self.hex_size
         for point in axial_points:
-            offset_point = point - self.topleft_corner
-            qcoord, rcoord = offset_point
-            if self.hex_format == 'flat':
-                yield (size * 3 / 2 * qcoord + self.xoffset,
-                       size * sqrt(3) * (rcoord + qcoord / 2) + self.yoffset)
-            else:
-                yield (size * sqrt(3) * (qcoord + rcoord / 2) + self.xoffset,
-                       size * 3 / 2 * rcoord + self.yoffset)
+            yield self.get_center(point)
+
+    def get_center(self, axial):
+        """Converts an axial coordinate to it's pixel center
+
+        :returns: 2-tuple of float
+        """
+        offset_point = axial - self.topleft_corner
+        qcoord, rcoord = offset_point
+        if self.hex_format == 'flat':
+            centerx = self.hex_size * 3 / 2 * qcoord + self.xoffset
+            centery = self.hex_size * sqrt(3) * (rcoord + qcoord / 2) + self.yoffset
+        else:
+            centerx = self.hex_size * sqrt(3) * (qcoord + rcoord / 2) + self.xoffset
+            centery = self.hex_size * 3 / 2 * rcoord + self.yoffset
+        return (centerx, centery)
 
     def clicked_hex(self, mousepos):
         """Gets the hexagon clicked
